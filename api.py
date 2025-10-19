@@ -1,136 +1,17 @@
-# import numpy as np
-# from fastapi import APIRouter, File, UploadFile, Form
-# from fastapi.responses import JSONResponse, StreamingResponse, Response
-# from fastapi.encoders import jsonable_encoder
-# from utils import read_dataframe, get_df_info_str, create_plot_pdf, factorize_categoricals
-# from io import BytesIO
-# import pandas as pd
-
-# router = APIRouter()
-
-# @router.post("/upload/")
-# async def upload_file(file: UploadFile = File(...)):
-#     df = await read_dataframe(file)
-#     if df is None:
-#         return JSONResponse({"error": "Не удалось прочитать файл. Убедитесь, что это CSV."}, status_code=400)
-
-#     # Удаляем все строки с пропущенными значениями во всех столбцах
-#     df = df.dropna()
-
-#     info_str = get_df_info_str(df)
-#     head_df = df.head(10)
-
-#     # Заменяем NaN на None
-#     head_df = head_df.where(pd.notnull(head_df), None)
-
-#     # Конвертируем numpy типы в родные python
-#     def convert_types(val):
-#         if isinstance(val, np.generic):
-#             return val.item()
-#         return val
-
-#     head_clean = head_df.applymap(convert_types)
-
-#     # Преобразуем в список словарей и кодируем
-#     head_list = head_clean.to_dict(orient="records")
-#     head_json = jsonable_encoder(head_list)
-
-#     columns = df.columns.tolist()
-
-#     return {"info": info_str, "head": head_json, "columns": columns}
-
-# @router.post("/plot/")
-# async def plot_graph(
-#     file: UploadFile = File(...),
-#     selected_columns: str = Form(...),
-#     chart_type: str = Form(...)
-# ):
-#     df = await read_dataframe(file)
-#     if df is None:
-#         return JSONResponse({"error": "Не удалось прочитать файл."}, status_code=400)
-
-#     columns = selected_columns.split(",")
-#     invalid_cols = [c for c in columns if c not in df.columns]
-#     if invalid_cols:
-#         return JSONResponse({"error": f"Колонки не найдены: {', '.join(invalid_cols)}"}, status_code=400)
-    
-#     plot_data = factorize_categoricals(df, columns)
-
-#     try:
-#         pdf_bytes = create_plot_pdf(plot_data, columns, chart_type)
-#     except ValueError as e:
-#         return JSONResponse({"error": str(e)}, status_code=400)
-
-#     return StreamingResponse(BytesIO(pdf_bytes), media_type="application/pdf",
-#                              headers={"Content-Disposition": "attachment; filename=plot.pdf"})
-
-# @router.post("/plot/image/")
-# async def plot_image(
-#     file: UploadFile = File(...),
-#     selected_columns: str = Form(...),
-#     chart_type: str = Form(...)
-# ):
-#     df = await read_dataframe(file)
-#     if df is None:
-#         return JSONResponse({"error": "Не удалось прочитать файл."}, status_code=400)
-
-#     columns = selected_columns.split(",")
-#     invalid_cols = [c for c in columns if c not in df.columns]
-#     if invalid_cols:
-#         return JSONResponse({"error": f"Колонки не найдены: {', '.join(invalid_cols)}"}, status_code=400)
-    
-#     plot_data = factorize_categoricals(df, columns)
-
-#     # Построение графика и сохранение в PNG
-#     fig, ax = plt.subplots(figsize=(8,6))
-#     if chart_type == "bar":
-#         plot_data.plot(kind="bar", ax=ax)
-#     elif chart_type == "barh":
-#         plot_data.plot(kind="barh", ax=ax)
-#     elif chart_type == "pie":
-#         if len(columns) != 1:
-#             return JSONResponse({"error":"Для круговой диаграммы выберите только одну колонку"}, status_code=400)
-#         plot_data[columns[0]].value_counts().plot.pie(ax=ax, autopct='%1.1f%%')
-#     else:
-#         return JSONResponse({"error":"Неверный тип графика"}, status_code=400)
-
-#     plt.tight_layout()
-#     buf = BytesIO()
-#     plt.savefig(buf, format='png')
-#     plt.close(fig)
-#     buf.seek(0)
-
-#     return Response(content=buf.getvalue(), media_type="image/png")
-
-# @router.post("/plot/pdf/")
-# async def plot_pdf(
-#     file: UploadFile = File(...),
-#     selected_columns: str = Form(...),
-#     chart_type: str = Form(...)
-# ):
-#     df = await read_dataframe(file)
-#     if df is None:
-#         return JSONResponse({"error":"Не удалось прочитать файл."}, status_code=400)
-
-#     columns = selected_columns.split(",")
-#     plot_data = factorize_categoricals(df, columns)
-
-#     pdf_bytes = create_plot_pdf(plot_data, columns, chart_type)
-
-#     return StreamingResponse(BytesIO(pdf_bytes), media_type="application/pdf", headers={
-#         "Content-Disposition": "attachment; filename=plot.pdf"
-#     })
-
 import numpy as np
 from fastapi import APIRouter, File, UploadFile, Form
 from fastapi.responses import JSONResponse, StreamingResponse, Response
 from fastapi.encoders import jsonable_encoder
 from utils import read_dataframe, get_df_info_str, create_plot_pdf, factorize_categoricals
+import io
 from io import BytesIO
 import matplotlib.pyplot as plt
 import pandas as pd
+import mplcursors
+
 
 router = APIRouter()
+
 
 @router.post("/upload/")
 async def upload_file(file: UploadFile = File(...)):
@@ -139,7 +20,13 @@ async def upload_file(file: UploadFile = File(...)):
         return JSONResponse({"error": "Не удалось прочитать файл. Убедитесь, что это CSV."}, status_code=400)
 
     df = df.dropna()
-    info_str = get_df_info_str(df)
+
+    # Перехватываем вывод df.info()
+    buffer = io.StringIO()
+    df.info(buf=buffer)
+    info_str = buffer.getvalue()
+    buffer.close()
+
     head_df = df.head(10)
     head_df = head_df.where(pd.notnull(head_df), None)
 
@@ -148,39 +35,87 @@ async def upload_file(file: UploadFile = File(...)):
             return val.item()
         return val
 
-    head_clean = head_df.applymap(convert_types)
+    head_clean = head_df.apply(lambda col: col.map(convert_types))
     head_json = jsonable_encoder(head_clean.to_dict(orient="records"))
     columns = df.columns.tolist()
 
     return {"info": info_str, "head": head_json, "columns": columns}
 
+
+def prepare_plot_data(df: pd.DataFrame, selected_col: str, group_by_col: str) -> pd.DataFrame:
+    if not group_by_col:
+        # если нет группировки, посчитать количество уникальных значений выбранного столбца
+        grouped = df.groupby(selected_col).size().reset_index(name='count')
+        return grouped.rename(columns={selected_col: 'category'})
+    else:
+        # если выбран столбец для агрегации
+        if pd.api.types.is_numeric_dtype(df[selected_col]):
+            grouped = df.groupby(group_by_col)[selected_col].mean().reset_index()
+        else:
+            # для нечисловых столбцов использовать подсчёт количества
+            grouped = df.groupby(group_by_col).size().reset_index(name='count')
+        return grouped
+
+
 @router.post("/plot/image/")
 async def plot_image(
     file: UploadFile = File(...),
-    selected_columns: str = Form(...),
-    chart_type: str = Form(...)
+    selected_column: str = Form(...),
+    chart_type: str = Form(...),
+    group_by_column: str = Form("")
 ):
     df = await read_dataframe(file)
     if df is None:
         return JSONResponse({"error": "Не удалось прочитать файл."}, status_code=400)
-    columns = selected_columns.split(",")
-    invalid_cols = [c for c in columns if c not in df.columns]
-    if invalid_cols:
-        return JSONResponse({"error": f"Колонки не найдены: {', '.join(invalid_cols)}"}, status_code=400)
 
-    plot_data = factorize_categoricals(df, columns)
+    if selected_column not in df.columns:
+        return JSONResponse({"error": f"Колонка не найдена: {selected_column}"}, status_code=400)
+    if group_by_column and group_by_column not in df.columns:
+        return JSONResponse({"error": f"Колонка группировки не найдена: {group_by_column}"}, status_code=400)
 
-    fig, ax = plt.subplots(figsize=(8,6))
-    if chart_type == "bar":
-        plot_data.plot(kind="bar", ax=ax)
-    elif chart_type == "barh":
-        plot_data.plot(kind="barh", ax=ax)
-    elif chart_type == "pie":
-        if len(columns) != 1:
-            return JSONResponse({"error":"Для круговой диаграммы выберите только одну колонку"}, status_code=400)
-        plot_data[columns[0]].value_counts().plot.pie(ax=ax, autopct='%1.1f%%')
+    plot_data = prepare_plot_data(df, selected_column, group_by_column)
+
+    fig, ax = plt.subplots(figsize=(10, 6))
+
+    if not group_by_column:
+        plot_data = plot_data.rename(columns={"category": selected_column})
+        barplot = plot_data.plot(kind="bar", x=selected_column, y="count", ax=ax)
     else:
-        return JSONResponse({"error":"Неверный тип графика"}, status_code=400)
+        y_col = selected_column if pd.api.types.is_numeric_dtype(df[selected_column]) else 'count'
+        barplot = plot_data.plot(kind="bar", x=group_by_column, y=y_col, ax=ax)
+    
+    # Кол-во уникальных значений для решения подписывать или показывать тултипы
+    unique_count = plot_data.shape[0]
+
+    if unique_count <= 10:
+        # Подписываем столбцы значениями над ними
+        for p in ax.patches:
+            height = p.get_height()
+            ax.annotate(f'{height:.2f}',
+                        (p.get_x() + p.get_width() / 2, height),
+                        ha='center', va='bottom')
+    else:
+        # Убираем подписи (set_xticklabels пустой)
+        ax.set_xticklabels([])
+        # Включаем всплывающие подсказки на столбцах
+        cursor = mplcursors.cursor(ax.patches, hover=True)
+        @cursor.connect("add")
+        def on_add(sel):
+            height = sel.artist[sel.index].get_height()
+            label = sel.artist[sel.index].get_x() + sel.artist[sel.index].get_width()/2
+            sel.annotation.set(text=f'{height:.2f}', position=(0, 20), anncoords="offset points")
+            sel.annotation.xy = (label, height)
+
+    # if chart_type == "barh":
+    #     ax.invert_yaxis()
+
+    # elif chart_type == "pie":
+    #     if group_by_column:
+    #         return JSONResponse({"error": "Для круговой диаграммы группировка не поддерживается"}, status_code=400)
+    #     plot_data.set_index(selected_column)['count'].plot.pie(ax=ax, autopct='%1.1f%%')
+
+    if chart_type != "bar":
+        return JSONResponse({"error": "Неверный тип графика"}, status_code=400)
 
     plt.tight_layout()
     buf = BytesIO()
@@ -189,20 +124,29 @@ async def plot_image(
     buf.seek(0)
     return Response(content=buf.getvalue(), media_type="image/png")
 
+
+
+
 @router.post("/plot/pdf/")
 async def plot_pdf(
     file: UploadFile = File(...),
-    selected_columns: str = Form(...),
-    chart_type: str = Form(...)
+    selected_column: str = Form(...),
+    chart_type: str = Form(...),
+    group_by_column: str = Form("")
 ):
     df = await read_dataframe(file)
     if df is None:
         return JSONResponse({"error": "Не удалось прочитать файл."}, status_code=400)
-    columns = selected_columns.split(",")
-    plot_data = factorize_categoricals(df, columns)
 
-    pdf_bytes = create_plot_pdf(plot_data, columns, chart_type)
+    if selected_column not in df.columns:
+        return JSONResponse({"error": f"Колонка не найдена: {selected_column}"}, status_code=400)
+    if group_by_column and group_by_column not in df.columns:
+        return JSONResponse({"error": f"Колонка группировки не найдена: {group_by_column}"}, status_code=400)
 
+    plot_data = prepare_plot_data(df, selected_column, group_by_column)
+    plot_data = factorize_categoricals(plot_data, plot_data.columns.tolist())
+
+    pdf_bytes = create_plot_pdf(plot_data, [selected_column], chart_type)
     return StreamingResponse(BytesIO(pdf_bytes), media_type="application/pdf", headers={
         "Content-Disposition": "attachment; filename=plot.pdf"
     })
