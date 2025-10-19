@@ -11,13 +11,11 @@
         table { border-collapse: collapse; margin-top: 1em; }
         th, td { border: 1px solid #ccc; padding: 0.4em 0.6em; }
         #plot-image { display:none; margin-top: 1em; max-width: 80%; border: 1px solid #ccc; padding: 5px; }
-        /* Горизонтальная прокрутка таблицы */
         #df-head-wrapper {
             overflow-x: auto;
             max-width: 100%;
             margin-top: 1em;
         }
-        /* Горизонтальное расположение радиокнопок */
         #columns-wrapper {
             display: flex;
             gap: 10px;
@@ -59,7 +57,10 @@
     <div id="columns-wrapper"></div>
 
     <h2>Выберите колонку для группировки</h2>
-    <select id="group-by-select" size="4" style="width: 300px;"></select>
+    <div id="group-by-message" style="font-style: italic; color: gray; margin-top: 0.5em;">
+        Пока в разработке
+    </div>
+
 
     <h2>Выберите тип графика</h2>
     <select id="chart-type">
@@ -127,17 +128,6 @@
                 });
             }
 
-            // Заполнение группировки - обычный select
-            let groupBySelect = document.getElementById("group-by-select");
-            groupBySelect.innerHTML = "";
-            data.columns.forEach(col => {
-                let option = document.createElement("option");
-                option.value = col;
-                option.textContent = col;
-                groupBySelect.appendChild(option);
-            });
-
-            // Заполнение колонок графика горизонтальными радиокнопками
             let columnsWrapper = document.getElementById("columns-wrapper");
             columnsWrapper.innerHTML = "";
             data.columns.forEach((col, idx) => {
@@ -157,19 +147,12 @@
         });
 
         document.getElementById("plot-btn").addEventListener("click", async () => {
-            if (!uploadedFile) {
-                alert("Выберите файл сначала");
-                return;
-            }
+            if(!uploadedFile) { alert("Выберите файл сначала"); return; }
             let selectedRadio = document.querySelector('input[name="columns-select"]:checked');
-            if(!selectedRadio) {
-                alert("Выберите колонку для графика");
-                return;
-            }
+            if(!selectedRadio) { alert("Выберите колонку для графика"); return; }
             let selected = selectedRadio.value;
 
-            let groupSelect = document.getElementById("group-by-select");
-            let groupSelected = groupSelect.value || "";
+            let groupSelected = ""; // заглушка, функционал в разработке
 
             let chartType = document.getElementById("chart-type").value;
 
@@ -179,8 +162,8 @@
             formData.append("group_by_column", groupSelected);
             formData.append("chart_type", chartType);
 
-            const res = await fetch("/api/plot/image/", { method: "POST", body: formData });
-            if (!res.ok) {
+            const res = await fetch("/api/plot/image/", {method: "POST", body: formData});
+            if(!res.ok) {
                 let errorData = await res.json();
                 alert(errorData.error || "Ошибка построения графика");
                 return;
@@ -194,7 +177,8 @@
             plotImage.style.display = "block";
 
             document.getElementById("download-pdf-btn").style.display = "inline-block";
-        });
+            });
+
 
         document.getElementById("download-pdf-btn").addEventListener("click", async () => {
             if (!uploadedFile) {
