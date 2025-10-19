@@ -10,6 +10,7 @@ app.include_router(api_router, prefix="/api")
 
 templates = Jinja2Templates(directory="templates")
 
+
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request):
     """
