@@ -1,0 +1,34 @@
+body { font-family: Arial, sans-serif; margin: 2em; }
+label { display: block; margin-top: 1em; }
+button { margin-top: 0.5em; }
+pre { background: #f4f4f4; padding: 1em; white-space: pre-wrap; font-family: monospace; line-height: 1.4; }
+table { border-collapse: collapse; margin-top: 1em; }
+th, td { border: 1px solid #ccc; padding: 0.4em 0.6em; }
+#plot-image { display:none; margin-top: 1em; max-width: 80%; border: 1px solid #ccc; padding: 5px; }
+#df-head-wrapper {
+    overflow-x: auto;
+    max-width: 100%;
+    margin-top: 1em;
+}
+#columns-wrapper {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 0.5em;
+}
+#columns-wrapper label {
+    cursor: pointer;
+    padding: 5px 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.2s ease;
+}
+#columns-wrapper label:hover {
+    background-color: #e0e0e0;
+}
+#columns-wrapper input[type="radio"] {
+    margin-right: 5px;
+}
