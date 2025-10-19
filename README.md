@@ -45,7 +45,7 @@
 ## Инструкция для запуска проекта:
 
 1. Клонировать репозиторий: `git clone git@github.com:ByAlexandrow/MISIS_Diploma_Project.git` 
-2. Создать и активировать виртуальное окружение: `python -m venv venv` --> `python venv/Source/activate`
+2. Создать и активировать виртуальное окружение: `python -m venv venv` --> `source venv/Scripts/activate`
 3. Установить зависимости: `pip install -r requirements.txt`
 4. Запустить приложение: `uvicorn main:app --reload`
 
