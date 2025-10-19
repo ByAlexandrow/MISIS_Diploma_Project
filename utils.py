@@ -38,17 +38,34 @@ def get_df_info_str(df: pd.DataFrame) -> str:
     return buffer.getvalue()
 
 
-def create_plot_pdf(
-    df: pd.DataFrame, columns: list[str], chart_type: str
+def create_plot_png(
+    df: pd.DataFrame, columns: list[str], chart_type: str, x_label: str = None
 ) -> bytes:
     """
-    Создает PDF-документ с диаграммой на основе данных CSV-файла.
-    Поддерживает тип графика: 'bar' - вертикальный столбчатый.
+    Создает PNG-изображение с диаграммой на основе данных.
+    Поддерживается только тип графика 'bar' - вертикальный столбчатый.
     """
     fig, ax = plt.subplots(figsize=(8, 6))
 
     if chart_type == "bar":
-        df[columns].plot(kind="bar", ax=ax)
+        cat_col = df.columns[0]
+        num_col = columns[0]
+        df.plot(kind="bar", x=cat_col, y=num_col, ax=ax)
+
+        if x_label:
+            ax.set_xlabel(x_label)
+        else:
+            ax.set_xlabel(cat_col)
+
+        ax.set_ylabel(num_col)
+        plt.setp(ax.get_xticklabels(), rotation=45, ha="right")
+        plt.tight_layout()
+
+        for p in ax.patches:
+            height = p.get_height()
+            ax.annotate(f'{height:.2f}',
+                        (p.get_x() + p.get_width() / 2, height),
+                        ha='center', va='bottom')
     else:
         raise ValueError(
             "Этот тип графика находится в разработке!\n"
@@ -58,7 +75,7 @@ def create_plot_pdf(
     plt.tight_layout()
 
     buf = BytesIO()
-    plt.savefig(buf, format='pdf')
+    plt.savefig(buf, format='png')
     plt.close(fig)
     buf.seek(0)
     return buf.read()

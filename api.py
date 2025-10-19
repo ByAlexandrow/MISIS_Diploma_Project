@@ -4,10 +4,10 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from io import BytesIO
 from fastapi import APIRouter, File, UploadFile, Form
-from fastapi.responses import JSONResponse, StreamingResponse, Response
+from fastapi.responses import JSONResponse, Response
 from fastapi.encoders import jsonable_encoder
 from utils import (
-    read_dataframe, create_plot_pdf,
+    read_dataframe, create_plot_png,
     factorize_categoricals,
     prepare_plot_data, get_df_info_str
 )
@@ -127,7 +127,7 @@ async def plot_image(
     return Response(content=buf.getvalue(), media_type="image/png")
 
 
-@router.post("/plot/pdf/")
+@router.post("/plot/png/")
 async def plot_pdf(
     file: UploadFile = File(...),
     selected_column: str = Form(...),
@@ -135,7 +135,7 @@ async def plot_pdf(
     group_by_column: str = Form("")
 ):
     """
-    Создание PDF-файла с построенным графиком.
+    Создание Png-файла с построенным графиком.
     Временно без реализации группировки.
     """
     df = await read_dataframe(file)
@@ -158,9 +158,11 @@ async def plot_pdf(
         }, status_code=501)
 
     plot_data = factorize_categoricals(plot_data, plot_data.columns.tolist())
-    pdf_bytes = create_plot_pdf(plot_data, [selected_column], chart_type)
-    return StreamingResponse(
-        BytesIO(pdf_bytes), media_type="application/pdf", headers={
-            "Content-Disposition": "attachment; filename=result.pdf"
-        }
+
+    if 'category' in plot_data.columns:
+        plot_data = plot_data.rename(columns={'category': selected_column})
+
+    png_bytes = create_plot_png(
+        plot_data, ['count'], chart_type, x_label=selected_column
     )
+    return Response(content=png_bytes, media_type="image/png")

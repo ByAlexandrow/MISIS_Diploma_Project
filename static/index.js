@@ -98,10 +98,10 @@ document.getElementById("plot-btn").addEventListener("click", async () => {
     plotImage.src = url;
     plotImage.style.display = "block";
 
-    document.getElementById("download-pdf-btn").style.display = "inline-block";
+    document.getElementById("download-png-btn").style.display = "inline-block";
 });
 
-document.getElementById("download-pdf-btn").addEventListener("click", async () => {
+document.getElementById("download-png-btn").addEventListener("click", async () => {
     if (!uploadedFile) {
         alert("Выберите файл сначала");
         return;
@@ -123,10 +123,10 @@ document.getElementById("download-pdf-btn").addEventListener("click", async () =
     formData.append("group_by_column", groupSelected);
     formData.append("chart_type", chartType);
 
-    const res = await fetch("/api/plot/pdf/", { method: "POST", body: formData });
+    const res = await fetch("/api/plot/png/", { method: "POST", body: formData });
     if (!res.ok) {
         let errorData = await res.json();
-        alert(errorData.error || "Ошибка скачивания PDF");
+        alert(errorData.error || "Ошибка скачивания .png");
         return;
     }
 
@@ -134,7 +134,7 @@ document.getElementById("download-pdf-btn").addEventListener("click", async () =
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "plot.pdf";
+    a.download = "result.png";
     document.body.appendChild(a);
     a.click();
     a.remove();
@@ -147,5 +147,5 @@ function clearUI(){
     document.getElementById("columns-wrapper").innerHTML = "";
     document.getElementById("group-by-select").innerHTML = "";
     document.getElementById("plot-image").style.display = "none";
-    document.getElementById("download-pdf-btn").style.display = "none";
+    document.getElementById("download-png-btn").style.display = "none";
 }
