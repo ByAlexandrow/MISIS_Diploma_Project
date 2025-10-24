@@ -50,6 +50,6 @@
 
 ## Разработчики:
 
-1. Дарья
-2. Анастасия
+1. Анастасия (https://github.com/nastyanurislamova-cpu)
+2. Дарья (https://github.com/DariaV08)
 3. Егор Александров (https://github.com/ByAlexandrow/)
