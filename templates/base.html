@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <title>"Средства разработки инженерных приложений"</title>
+    <link rel="icon" href="/static/favicon/favicon.ico" type="image/x-icon" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/static/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon/favicon-16x16.png">
+    <link rel="stylesheet" href="/static/style/index.css"/>
+    <link rel="stylesheet" href="/static/style/includes/header.css" />
+    <link rel="stylesheet" href="/static/style/includes/footer.css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+</head>
+<body>
+    {% include 'includes/header.html' %}
+    
+    <div class="title-block">
+        Загрузка CSV-файла:
+    </div>
+    <div class="input-file-wrapper">
+        <input type="file" id="file-input" class="input-file" />
+        <label for="file-input" class="input-file-label">Загрузить файл</label>
+        <div id="file-name" style="font-style: italic; color: #555; text-align: center;"></div>
+    </div>
+    <script>
+        const input = document.getElementById('file-input');
+        const fileNameDiv = document.getElementById('file-name');
+
+        input.addEventListener('change', () => {
+            if (input.files.length > 0) {
+            fileNameDiv.textContent = input.files[0].name;
+            } else {
+            fileNameDiv.textContent = '';
+            }
+        });
+    </script>
+
+    <br>
+    <button id="analyze-btn">
+        Выполнить анализ
+    </button>
+
+    <div class="title-block">
+        Информация о DataFrame:
+    </div>
+    <pre id="df-info"></pre>
+
+    <div class="title-block">Первые 10 строк:</div>
+    <div id="df-head-wrapper">
+        <table id="df-head"></table>
+    </div>
+
+    <div class="title-block">Колонка для построения графика:</div>
+    <div id="columns-wrapper"></div>
+
+    <div class="title-block">Колонка для группировки:</div>
+    <div id="group-by-message" style="font-style: italic; color: #555; text-align: center;">
+        Находится в разработке
+    </div>
+
+    <div class="title-block">Тип графика:</div>
+    <select id="chart-type">
+        <option value="bar">Столбчатый вертикальный</option>
+        <option value="barh">Столбчатый горизонтальный (в разработке)</option>
+        <option value="pie">Круговой (в разработке)</option>
+    </select>
+
+    <br/>
+    <button id="plot-btn">Построить график</button>
+
+    <img id="plot-image" alt="График" />
+    <br>
+    <button id="download-png-btn" style="display:none;">Скачать PNG</button>
+
+    {% include 'includes/footer.html' %}
+
+    <script src="/static/index.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+</body>
+</html>

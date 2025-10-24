@@ -1,0 +1,33 @@
+footer {
+    width: 100%;
+    margin-top: 20px;
+    background-color: #d9d9d9;
+}
+
+.footer-title-block {
+    font-family: 'Montserrat-Bold', sans-serif;
+    font-style: italic;
+    font-weight: normal;
+    font-size: 20px;
+    text-align: center;
+    background-color: #d9d9d9;
+}
+
+.developers-links {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.developers-links a {
+    text-decoration: none;
+    font-weight: normal;
+    font-size: 18px;
+    color: #0b10b3;
+}
+
+.developers-links a:hover {
+    text-decoration: underline;
+}
