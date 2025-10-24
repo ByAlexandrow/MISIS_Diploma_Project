@@ -1,88 +1,123 @@
 @font-face {
-    font-family: 'Montserrat';
+    font-family: 'Montserrat-Bold';
     src: url('/static/fonts/Montserrat-Bold.ttf') format('ttf');
-    font-weight: 400;
-    font-style: normal;
+
+    font-family: 'Montserrat-Light';
+    src: url('/static/fonts/Montserrat-Light.ttf') format('ttf');
 }
 
+/* Общие стили */
 body {
     margin: 2em;
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
+    flex: 1;
+    margin-bottom: 40px;
 }
 
-label {
-    display: block;
-    margin-top: 1em;
+/* Стили заголовков */
+.title-block {
+    font-family: 'Montserrat-Light', sans-serif;
+    font-style: italic;
+    font-weight: normal;
+    font-size: 23px;
+    text-align: center;
+    max-width: 800px;
+    margin: 20px 0 10px 0;
+    width: 100%;
+    align-self: center;
 }
 
-button {
-    margin-top: 0.5em;
+/* Скрываем оригинальный input файла */
+.input-file {
+  display: none;
+}
+/* Новый кастомный input файла */
+.input-file-label {
+    margin-top: 3px;
+    display: inline-block;
+    padding: 5px 20px;
+    background-color: #0b10b3;
+    color: #fff;
+    font-size: 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s, box-shadow 0.2s, transform 0.2s;
+}
+.input-file-label:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    transform: scale(1.02);
 }
 
-pre {
-    background: #f4f4f4;
-    padding: 1em;
-    white-space: pre-wrap;
-    font-family: monospace;
-    line-height: 1.4;
-}
 
+/* Стили таблицы */
 table {
     border-collapse: collapse;
     margin-top: 1em;
 }
-
 th, td {
     border: 1px solid #ccc;
     padding: 0.4em 0.6em;
 }
-
-#plot-image {
-    display: none;
-    margin-top: 1em;
-    max-width: 80%;
-    border: 1px solid #ccc;
-    padding: 5px;
-}
-
 #df-head-wrapper {
     overflow-x: auto;
-    max-width: 100%;
-    margin-top: 1em;
+    width: 90%;
+    margin-top: 10px;
 }
 
+/* Стиль кнопок */
+button {
+    margin-top: 3px;
+    background-color: #0b10b3;
+    color: #fff;
+    border: none;
+    border-radius: 20px !important;
+    padding: 5px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s, box-shadow 0.2s, transform 0.2s;
+}
+button:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    transform: scale(1.02);
+}
+
+/* Стили выбора колонок */
 #columns-wrapper {
     display: flex;
-    gap: 10px;
+    gap: 15px;
     flex-wrap: wrap;
-    margin-top: 0.5em;
+    margin-top: 20px;
     justify-content: center;
 }
-
 #columns-wrapper label {
     cursor: pointer;
-    padding: 5px 12px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    user-select: none;
-    display: flex;
-    align-items: center;
-    transition: background-color 0.2s ease;
+    padding: 5px 13px;
+    border: 2px solid #0b10b3;
+    border-radius: 30px;
+    background-color: #fff;
+    font-size: 14px;
+    transition: background-color 0.3s, transform 0.2s;
 }
-
 #columns-wrapper label:hover {
-    background-color: #e0e0e0;
+    background-color: #e7f0fd;
+}
+#columns-wrapper input[type="radio"]:checked + label {
+    background-color: #0b10b3;
+    color: #fff;
+    border-color: #0b10b3;
+    font-weight: bold;
 }
 
-#columns-wrapper input[type="radio"] {
-    margin-right: 5px;
-}
-
-.title-block {
-    font-family: 'Montserrat', sans-serif;
-    font-weight: italic;
-    font-size: 30px;
+/* Стили графика (изначально скрыт) */
+#plot-image {
+    display: none;
+    margin-top: 20px;
+    max-width: 80%;
+    border: 2px solid #ccc;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
