@@ -1,63 +1,8 @@
-<!-- <!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8" />
-    <title>Анализ DataFrame и построение графиков</title>
-    <link rel="icon" href="/static/favicon/favicon.ico" type="image/x-icon" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/static/favicon/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon/favicon-16x16.png">
-    <link rel="stylesheet" href="/static/style/index.css"/>
-    <link rel="stylesheet" href="/static/style/includes/header.css" />
-    <link rel="stylesheet" href="/static/style/includes/footer.css" />
-</head>
-<body>
-    {% include 'includes/header.html' %}
-    
-    <h1>Загрузите CSV файл с DataFrame</h1>
-    <input type="file" id="file-input" accept=".csv" />
-    <button id="analyze-btn">Проанализировать</button>
-
-    <h2>Информация о DataFrame</h2>
-    <pre id="df-info"></pre>
-
-    <h2>Первые 10 строк</h2>
-    <div id="df-head-wrapper">
-        <table id="df-head"></table>
-    </div>
-
-    <h2>Выберите колонку для графика</h2>
-    <div id="columns-wrapper"></div>
-
-    <h2>Выберите колонку для группировки</h2>
-    <div id="group-by-message" style="font-style: italic; color: gray; margin-top: 0.5em;">
-        Пока в разработке
-    </div>
-
-    <h2>Выберите тип графика</h2>
-    <select id="chart-type">
-        <option value="bar">Столбчатый вертикальный</option>
-        <option value="barh">Столбчатый горизонтальный (в разработке)</option>
-        <option value="pie">Круговой (в разработке)</option>
-    </select>
-
-    <br/>
-    <button id="plot-btn">Построить график</button>
-    <button id="download-png-btn" style="display:none;">Скачать PNG</button>
-
-    <img id="plot-image" alt="График" />
-
-    {% include 'includes/footer.html' %}
-
-    <script src="/static/index.js"></script>
-</body>
-</html> -->
-
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8" />
-    <title>Анализ DataFrame и построение графиков</title>
+    <title>"Средства разработки инженерных приложений"</title>
     <link rel="icon" href="/static/favicon/favicon.ico" type="image/x-icon" />
     <link rel="apple-touch-icon" sizes="180x180" href="/static/favicon/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon/favicon-32x32.png">
@@ -69,27 +14,33 @@
 <body>
     {% include 'includes/header.html' %}
     
-    <div class="title-1">Загрузите CSV файл с DataFrame</div>
+    <div class="title-block">
+        Загрузка CSV-файла:
+    </div>
     <input type="file" id="file-input" accept=".csv" />
-    <button id="analyze-btn">Проанализировать</button>
+    <button id="analyze-btn">
+        >Выполнить анализ<
+    </button>
 
-    <div class="title-2">Информация о DataFrame</div>
+    <div class="title-block">
+        Информация о DataFrame:
+    </div>
     <pre id="df-info"></pre>
 
-    <div class="title-2">Первые 10 строк</div>
+    <div class="title-block">Первые 10 строк:</div>
     <div id="df-head-wrapper">
         <table id="df-head"></table>
     </div>
 
-    <div class="title-2">Выберите колонку для графика</div>
+    <div class="title-block">Колонка для построения графика:</div>
     <div id="columns-wrapper"></div>
 
-    <div class="title-2">Выберите колонку для группировки</div>
+    <div class="title-block">Колонка для группировки:</div>
     <div id="group-by-message" style="font-style: italic; color: gray; margin-top: 0.5em;">
         Пока в разработке
     </div>
 
-    <div class="title-2">Выберите тип графика</div>
+    <div class="title-block">Тип графика:</div>
     <select id="chart-type">
         <option value="bar">Столбчатый вертикальный</option>
         <option value="barh">Столбчатый горизонтальный (в разработке)</option>
@@ -97,8 +48,8 @@
     </select>
 
     <br/>
-    <button id="plot-btn">Построить график</button>
-    <button id="download-png-btn" style="display:none;">Скачать PNG</button>
+    <button id="plot-btn">>Построить график<</button>
+    <button id="download-png-btn" style="display:none;">>Скачать PNG<</button>
 
     <img id="plot-image" alt="График" />
 

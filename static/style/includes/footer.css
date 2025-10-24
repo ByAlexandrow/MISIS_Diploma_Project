@@ -1,6 +1,16 @@
 footer {
     width: 100%;
-    font-weight: bold;
     margin: 1em 0;
+}
+
+.footer-title-block {
+    font-family: 'Montserrat', sans-serif;
+    font-style: italic;
+    font-weight: normal;
+    font-size: 20px;
     text-align: center;
+}
+
+a {
+    color: black;
 }

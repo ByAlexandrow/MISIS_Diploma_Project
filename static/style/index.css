@@ -6,7 +6,6 @@
 }
 
 body {
-    font-family: 'Montserrat', sans-serif;
     margin: 2em;
     display: flex;
     flex-direction: column;
@@ -82,9 +81,8 @@ th, td {
     margin-right: 5px;
 }
 
-header, footer {
-    width: 100%;
-    font-weight: bold;
-    margin: 1em 0;
-    text-align: center;
+.title-block {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: italic;
+    font-size: 30px;
 }

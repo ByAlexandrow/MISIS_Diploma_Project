@@ -1,6 +1,12 @@
 header {
     width: 100%;
-    font-weight: bold;
     margin: 1em 0;
+}
+
+.header-title-block {
+    font-family: 'Montserrat', sans-serif;
+    font-style: italic;
+    font-weight: normal;
+    font-size: 30px;
     text-align: center;
 }
