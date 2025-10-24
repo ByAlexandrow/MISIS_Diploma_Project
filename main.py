@@ -20,4 +20,4 @@ async def home(request: Request):
     Главная страница сайта.
     Возвращает: шаблон index.html с объектом запроса.
     """
-    return templates.TemplateResponse("index.html", {"request": request})
+    return templates.TemplateResponse("base.html", {"request": request})
